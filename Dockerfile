@@ -4,8 +4,8 @@ FROM ubuntu:latest
 # Set the working directory inside the container
 WORKDIR /app
 
-# Update the package lists and install Python 3 and pip
-RUN apt-get update && apt-get install -y python3 python3-pip
+# Update the package lists and install Python 3, pip, and other dependencies
+RUN apt-get update && apt-get install -y python3 python3-pip python3-dev libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev gcc
 
 # Install virtualenv
 RUN pip3 install virtualenv
@@ -21,10 +21,10 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the Flask application code to the working directory
-COPY app.py .
+COPY . .
 
 # Expose the port on which the Flask application will run
 EXPOSE 5000
 
 # Define the command to run when the container starts
-CMD ["python3", "app.py"]
+CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0:5000"]
