@@ -1,11 +1,14 @@
-# Use an official Python runtime as the base image
-FROM python:3
+# Use a base image with Ubuntu
+FROM ubuntu:latest
 
-# Set the working directory in the container
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the requirements file to the container
-COPY requirements.txt .
+# Update the package lists and install Python 3 and pip
+RUN apt-get update && apt-get install -y python3 python3-pip
+
+# Install virtualenv
+RUN pip3 install virtualenv
 
 # Create a virtual environment
 RUN python3 -m venv venv
@@ -13,17 +16,15 @@ RUN python3 -m venv venv
 # Activate the virtual environment
 RUN /bin/bash -c "source venv/bin/activate"
 
-# update pip
-RUN python -m pip install --upgrade pip
+# Install project dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Install dependencies
-RUN pip install flask torch nltk numpy sklearn pandas matplotlib
+# Copy the Flask application code to the working directory
+COPY app.py .
 
-# Copy the Django project to the container
-COPY . .
-
-# Expose the Django development server port (adjust if needed)
+# Expose the port on which the Flask application will run
 EXPOSE 5000
 
-# Set the command to run when the container starts
-CMD ["python" ,"-m" , "flask" ,"run"]
+# Define the command to run when the container starts
+CMD ["python3", "app.py"]
