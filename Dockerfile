@@ -13,6 +13,9 @@ RUN python3 -m venv venv
 # Activate the virtual environment
 RUN /bin/bash -c "source venv/bin/activate"
 
+# update pip
+RUN python -m pip install --upgrade pip
+
 # Install dependencies
 RUN pip install flask torch nltk numpy sklearn pandas matplotlib
 
